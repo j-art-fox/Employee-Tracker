@@ -42,11 +42,11 @@ function runMainMenu() {
 }
 
 function viewDepartments() {
-    console.log("viewDepartments");
+    console.log("Department Names and Department IDs");
 }
 
 function viewRoles() {
-    console.log("viewDepartments");
+    console.log("viewRoles");
 }
 
 function viewEmployees() {
