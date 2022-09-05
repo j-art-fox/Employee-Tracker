@@ -42,7 +42,8 @@ function runMainMenu() {
 }
 
 function viewDepartments() {
-    console.log("Department Names and Department IDs");
+    console.log("select * from department");
+
 }
 
 function viewRoles() {
