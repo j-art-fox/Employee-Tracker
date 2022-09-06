@@ -1,4 +1,5 @@
 require("console.table");
+const addfunctions = require("./routes/addfunctions")
 const inquirer = require("inquirer");
 const mysql = require("mysql2");
 const db = mysql.createConnection({
@@ -11,6 +12,8 @@ const db = mysql.createConnection({
 db.connect((err) => {
     if (err) throw err;
 });
+
+
 
 //This is a promise using async + await instead of .then
 async function runMainMenu() {
@@ -35,13 +38,13 @@ async function runMainMenu() {
             viewEmployees();
             break;
         case 'add a department':
-            addDepartment();
+            addfunctions.addDepartment();
             break;
         case 'add a role':
-            addRole();
+            addfunctions.addRole();
             break;
         case 'add an employee':
-            addEmployee();
+            addfunctions.addEmployee();
             break;
         case 'update an employee role':
             updateEmpRole();
@@ -85,20 +88,6 @@ async function viewEmployees() {
         console.log(err)
     }
     
-}
-
-function addDepartment() {
-    console.log("addDepartment");
-}
-
-function addRole() {
-    // review activities 8, crud insert 
-    console.log("addRole");
-
-}
-
-function addEmployee() {
-    console.log("addEmployee");
 }
 
 function updateEmpRole() {
