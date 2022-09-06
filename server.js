@@ -10,8 +10,7 @@ const db = mysql.createConnection({
 
 db.connect((err) => {
     if (err) throw err;
-
-})
+});
 
 //This is a promise using async + await instead of .then
 async function runMainMenu() {
@@ -21,9 +20,10 @@ async function runMainMenu() {
                 type: 'list',
                 message: 'Main Menu',
                 name: "mainMenu",
-                choices: ["view all departments", "view all roles", "view all employees", "add a department", "add a role", "add an employee", "update an employee role"]
+                choices: ["view all departments", "view all roles", "view all employees", "add a department", "add a role", "add an employee", "update an employee role", "exit"]
             }
         ])
+
     switch (data.mainMenu) {
         case 'view all departments':
             viewDepartments();
@@ -46,26 +46,45 @@ async function runMainMenu() {
         case 'update an employee role':
             updateEmpRole();
             break;
-
+        case 'exit':
+            endInquirer();
+        default:
+            endInquirer();
     }
 };
 
 async function viewDepartments() {
-    // .promise() returns back data in various formats as an index(as an array), and if you want to use the object format, then array item[0] is your go to. 
+    try {
+        // .promise() returns back data in various formats as an index(as an array), and if you want to use the object format, then array item[0] is your go to. 
+        const depData = await db.promise().query("select * from department");
+        // console.log vs .table = .table comes back as a formatted table, like when you use select * from 'table'
+        console.table(depData[0]);
+        runMainMenu();
+    } catch (err) {
+        console.log(err)
+    }
 
-    const depData = await db.promise().query("select * from department");
-    // console.log vs .table = .table comes back as a formatted table, like when you use select * from 'table'
-    console.table(depData[0]);
-    runMainMenu();
-  
 }
 
-function viewRoles() {
-    console.log("viewRoles");
+async function viewRoles() {
+    try {
+        const roleData = await db.promise().query("select * from role");
+        console.table(roleData[0]);
+        runMainMenu();
+    } catch (err) {
+        console.log(err)
+    }
 }
 
-function viewEmployees() {
-    console.log("viewEmployees");
+async function viewEmployees() {
+    try {
+        const employeeData = await db.promise().query("select * from employee");
+        console.table(employeeData[0]);
+        runMainMenu();
+    } catch (err) {
+        console.log(err)
+    }
+    
 }
 
 function addDepartment() {
@@ -84,6 +103,9 @@ function addEmployee() {
 
 function updateEmpRole() {
     console.log("updateEmpRole")
+}
+function endInquirer() {
+    return;
 }
 
 function init() {
