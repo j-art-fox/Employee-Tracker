@@ -1,5 +1,4 @@
 require("console.table");
-const addfunctions = require("./routes/addfunctions")
 const inquirer = require("inquirer");
 const mysql = require("mysql2");
 const db = mysql.createConnection({
@@ -12,8 +11,6 @@ const db = mysql.createConnection({
 db.connect((err) => {
     if (err) throw err;
 });
-
-
 
 //This is a promise using async + await instead of .then
 async function runMainMenu() {
@@ -53,41 +50,6 @@ async function runMainMenu() {
             process.exit();
     }
 };
-
-async function viewDepartments() {
-    try {
-        // .promise() returns back data in various formats as an index(as an array), and if you want to use the object format, then array item[0] is your go to. 
-        const depData = await db.promise().query("select * from department");
-        // console.log vs .table = .table comes back as a formatted table, like when you use select * from 'table'
-        console.table(depData[0]);
-    } catch (err) {
-        res.status(500);
-        return res.json(err)
-    }
-    runMainMenu();
-
-}
-
-async function viewRoles() {
-    try {
-        const roleData = await db.promise().query("select * from role");
-        console.table(roleData[0]);
-    } catch (err) {
-        console.log(err)
-    }
-    runMainMenu();
-}
-
-async function viewEmployees() {
-    try {
-        const employeeData = await db.promise().query("select * from employee");
-        console.table(employeeData[0]);
-    } catch (err) {
-        console.log(err)
-    }
-    runMainMenu();
-
-}
 
 function addEmployee() {
     console.log("Add new employee");
@@ -140,9 +102,9 @@ function addEmployee() {
 }
 
 async function addDepartment() {
-    console.log("addDepartment");
+    console.log("Add a new department");
     const newDepData = await inquirer
-        .prompt(addfunctions.depQues)
+        .prompt(depQues)
     const departmentName = newDepData.departmentName.trim();
     await db.promise().query('INSERT INTO department VALUES (DEFAULT, ?)', [departmentName]
     );
@@ -150,8 +112,54 @@ async function addDepartment() {
     runMainMenu();
 }
 
+function addRole() {
+    // review activities 8, crud insert 
+    console.log("addRole");
+}
+
 function updateEmpRole() {
     console.log("updateEmpRole")
+}
+
+async function viewEmployees() {
+    try {
+        const employeeData = await db.promise().query("select * from employee");
+        console.table(employeeData[0]);
+    } catch (err) {
+        console.log(err)
+    }
+    runMainMenu();
+
+}
+
+const depQues = [
+    {
+        type: 'input',
+        message: 'Type the name of the new department.',
+        name: 'departmentName'
+    }
+]
+
+async function viewRoles() {
+    try {
+        const roleData = await db.promise().query("select * from role");
+        console.table(roleData[0]);
+    } catch (err) {
+        console.log(err)
+    }
+    runMainMenu();
+}
+
+async function viewDepartments() {
+    try {
+        // .promise() returns back data in various formats as an index(as an array), and if you want to use the object format, then array item[0] is your go to. 
+        const depData = await db.promise().query("select * from department");
+        // console.log vs .table = .table comes back as a formatted table, like when you use select * from 'table'
+        console.table(depData[0]);
+    } catch (err) {
+        console.log(err)
+    }
+    runMainMenu();
 }
 
 function init() {
@@ -161,6 +169,7 @@ function init() {
 init()
 
 module.exports = {
+    runMainMenu,
     db,
     mysql
 }
