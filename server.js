@@ -18,7 +18,7 @@ async function runMainMenu() {
         .prompt([
             {
                 type: 'list',
-                message: 'Main Menu',
+                message: '           ***** MAIN MENU *****           ',
                 name: "mainMenu",
                 choices: ["view all departments", "view all roles", "view all employees", "add a department", "add a role", "add an employee", "update an employee role", "exit"]
             }
@@ -154,10 +154,50 @@ function addRole() {
     })
 }
 
-//TODO
+
 function updateEmpRole() {
-    console.log("updateEmpRole")
-}
+    console.log("Update Employee's Role");
+    db.query("SELECT * FROM employee", (err, results) => {
+        if (err) throw err;
+        inquirer
+            .prompt([
+                {
+                    type: "list",
+                    message: "Please select the employee you want to update.",
+                    choices: () => {
+                        let names = [];
+                        for (const name of results) {
+                            names.push(name.first_name)
+                        }
+                        return names;
+                    },
+                    name: "name",
+                },
+                {
+                    type: "list",
+                    message: "Please select the ID of the role you want to assign to this employee",
+                    choices: () => {
+                        let roles = [];
+                        for (const role of results) {
+                            roles.push(role.role_id)
+                        }
+                        return roles;
+                    },
+                    name: "newRole"
+                }
+            ]).then((response) => {
+                db.query("UPDATE employee SET ? WHERE first_name= ?",
+                    [
+                        {
+                            role_id: response.newRole
+                        }, response.name
+                    ],
+                    console.log(`${response.name}'s new role has been saved.`),
+                    runMainMenu()
+                )
+            })
+        })
+    }
 
 async function viewEmployees() {
     try {
@@ -201,6 +241,10 @@ async function viewDepartments() {
 }
 
 function init() {
+    console.log("           **************************           ")
+    console.log("           ......Welcome to the......           ")
+    console.log("           ⭐️ EMPLOYEE TRACKER 5000⭐️           ")
+    console.log("           **************************           ")
     runMainMenu();
 };
 
