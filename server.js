@@ -38,21 +38,19 @@ async function runMainMenu() {
             viewEmployees();
             break;
         case 'add a department':
-            addfunctions.addDepartment();
+            addDepartment();
             break;
         case 'add a role':
-            addfunctions.addRole();
+            addRole();
             break;
         case 'add an employee':
-            addfunctions.addEmployee();
+            addEmployee();
             break;
         case 'update an employee role':
             updateEmpRole();
             break;
         case 'exit':
-            endInquirer();
-        default:
-            endInquirer();
+            process.exit();
     }
 };
 
@@ -62,10 +60,11 @@ async function viewDepartments() {
         const depData = await db.promise().query("select * from department");
         // console.log vs .table = .table comes back as a formatted table, like when you use select * from 'table'
         console.table(depData[0]);
-        runMainMenu();
     } catch (err) {
-        console.log(err)
+        res.status(500);
+        return res.json(err)
     }
+    runMainMenu();
 
 }
 
@@ -73,28 +72,86 @@ async function viewRoles() {
     try {
         const roleData = await db.promise().query("select * from role");
         console.table(roleData[0]);
-        runMainMenu();
     } catch (err) {
         console.log(err)
     }
+    runMainMenu();
 }
 
 async function viewEmployees() {
     try {
         const employeeData = await db.promise().query("select * from employee");
         console.table(employeeData[0]);
-        runMainMenu();
     } catch (err) {
         console.log(err)
     }
-    
+    runMainMenu();
+
+}
+
+function addEmployee() {
+    console.log("Add new employee");
+    db.query("SELECT * FROM role", (err, results) => {
+        if (err) throw err;
+        inquirer
+            .prompt([
+                {
+                    type: 'input',
+                    message: "Please input the employee's first name.",
+                    name: 'firstName'
+                },
+                {
+                    type: 'input',
+                    message: "Please input the employee's last name.",
+                    name: 'lastName'
+                },
+                {
+                    type: 'list',
+                    message: "Select the id-number for their role.",
+                    name: 'role',
+                    choices: () => {
+                        let roles = [];
+                        for (const role of results) {
+                            roles.push(role.id)
+                        }
+                        return roles;
+                    }
+                },
+                {
+                    type: 'list',
+                    message: "Select the id-number for their manager.",
+                    name: 'manager',
+                    choices: ["1", "2", "3", "4"]
+                }
+            ]).then((response) => {
+                const fn = response.firstName.trim();
+                const ln = response.lastName.trim();
+                db.query("INSERT INTO employee SET ?",
+                    {
+                        first_name: fn,
+                        last_name: ln,
+                        role_id: response.role,
+                        manager_id: response.manager
+                    });
+                console.log(`${fn} ${ln} has been successfully saved.`);
+                runMainMenu();
+                });
+    });
+}
+
+async function addDepartment() {
+    console.log("addDepartment");
+    const newDepData = await inquirer
+        .prompt(addfunctions.depQues)
+    const departmentName = newDepData.departmentName.trim();
+    await db.promise().query('INSERT INTO department VALUES (DEFAULT, ?)', [departmentName]
+    );
+    console.log(`${departmentName} has been saved.`)
+    runMainMenu();
 }
 
 function updateEmpRole() {
     console.log("updateEmpRole")
-}
-function endInquirer() {
-    return;
 }
 
 function init() {
@@ -102,3 +159,8 @@ function init() {
 };
 
 init()
+
+module.exports = {
+    db,
+    mysql
+}
