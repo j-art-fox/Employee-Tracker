@@ -85,6 +85,7 @@ function addEmployee() {
                     name: 'manager',
                     choices: ["1", "2", "3", "4"]
                 }
+
             ]).then((response) => {
                 const fn = response.firstName.trim();
                 const ln = response.lastName.trim();
@@ -97,7 +98,7 @@ function addEmployee() {
                     });
                 console.log(`${fn} ${ln} has been successfully saved.`);
                 runMainMenu();
-                });
+            });
     });
 }
 
@@ -113,10 +114,47 @@ async function addDepartment() {
 }
 
 function addRole() {
-    // review activities 8, crud insert 
-    console.log("addRole");
+    console.log("Add a new role");
+    db.query("SELECT * FROM department", (err, results) => {
+        if (err) throw err;
+        inquirer
+            .prompt([
+                {
+                    type: "input",
+                    message: "Please input the name of the new role.",
+                    name: "title"
+                },
+                {
+                    type: "input",
+                    message: "Please input the gross annual salary for this role.",
+                    name: "salary"
+                },
+                {
+                    type: "list",
+                    message: "Please select the department id to associate with this role.",
+                    choices: () => {
+                        let departments = [];
+                        for (const department of results) {
+                            departments.push(department.id)
+                        }
+                        return departments;
+                    },
+                    name: 'department_id'
+                }
+            ]).then((response) => {
+                db.query("INSERT INTO role SET ?",
+                    {
+                        title: response.title,
+                        salary: response.salary,
+                        department_id: response.department_id
+                    })
+                console.log(`${response.title} has been successfully saved.`);
+                runMainMenu();
+            })
+    })
 }
 
+//TODO
 function updateEmpRole() {
     console.log("updateEmpRole")
 }
@@ -167,9 +205,3 @@ function init() {
 };
 
 init()
-
-module.exports = {
-    runMainMenu,
-    db,
-    mysql
-}
