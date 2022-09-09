@@ -25,15 +25,17 @@ VALUES  ("Product Manager", 2, 1 ),
         ("COO", 3, 6);
 
 INSERT INTO employee (first_name, last_name, role_id, manager_id)
-VALUES  ("Peter", "Pan", 1, null ),
-        ("John", "Darling", 1, null ),
-        ("Mary", "Darling", 1, null ),
-        ("James", "Hook", 1, null ),
+VALUES  ("Peter", "Pan", 12, null ),
+        ("John", "Darling", 13, null ),
+        ("Mary", "Darling", 14, null ),
+        ("James", "Hook", 11, null ),
         ("Mr", "Smee", 6, 4 ),
-        ("Wendy", "Darling", 1, 3),
-        ("Peter", "Banning", 1, 1),
-        ("Moira", "Banning",  1, 2),
-        ("Jack", "Banning",  1, 1),
-        ("Dante", "Basco",  1, 1),
-        ("Maggie", "Banning",  1, 3),
-        ("Isaiah", "Robinson",  1, 2);
+        ("Wendy", "Darling", 10, 3),
+        ("Peter", "Banning", 9, 1),
+        ("Moira", "Banning",  8, 2),
+        ("Jack", "Banning",  7, 1),
+        ("Dante", "Basco",  6, 1),
+        ("Maggie", "Banning",  4, 3),
+        ("Isaiah", "Robinson",  3, 2),
+        ("Rodger", "Banning",  2, 3),
+        ("Francis", "Robinson",  1, 2);
